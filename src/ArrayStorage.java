@@ -5,7 +5,7 @@ import java.util.Arrays;
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    private static int numberResumes;
+    private int numberResumes;
 
     void clear() {
         Arrays.fill(storage, 0, numberResumes, null);
@@ -33,6 +33,7 @@ public class ArrayStorage {
                 numberResumes--;
                 System.arraycopy(storage, (i + 1), storage, i, numberResumes - i);
                 storage[numberResumes] = null;
+                break;
             }
         }
     }
