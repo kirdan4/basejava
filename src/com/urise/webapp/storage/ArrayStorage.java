@@ -8,25 +8,23 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    static final int LIMIT_STORAGE = 10000;
-    private final Resume[] storage = new Resume[LIMIT_STORAGE];
+    private static final int STORAGE_LIMIT = 10000;
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
 
     public void save(Resume r) {
-        if (isFreeSpace()) {
+        if (size > STORAGE_LIMIT) {
             System.out.println("Резюме не сохранено. Хранилище переполнено.");
+        } else if (getIndex(r.getUuid()) != -1) {
+            System.out.printf("Резюме не сохранено. Резюме с таким Uuid = %s уже есть в базе.\n", r.getUuid());
         } else {
-            if (isFound(r.getUuid())) {
-                System.out.printf("Резюме не сохранено. Резюме с таким Uuid = %s уже есть в базе.\n", r.getUuid());
-            } else {
-                storage[size] = r;
-                size++;
-            }
+            storage[size] = r;
+            size++;
         }
     }
 
     public void update(Resume r, String newUuid) {
-        if (!isFound(r.getUuid())) {
+        if (getIndex(r.getUuid()) == -1) {
             System.out.printf("Резюме c Uuid = %s не существует.\n", r.getUuid());
         } else {
             r.setUuid(newUuid);
@@ -35,31 +33,23 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (!isFound(uuid)) {
+        int index = getIndex(uuid);
+        if (index == -1) {
             System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].getUuid().equals(uuid)) {
-                    return storage[i];
-                }
-            }
+            return null;
         }
-        return null;
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        if (!isFound(uuid)) {
+        int index = getIndex(uuid);
+        if (index == -1) {
             System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
         } else {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].getUuid().equals(uuid)) {
-                    size--;
-                    System.arraycopy(storage, (i + 1), storage, i, size - i);
-                    storage[size] = null;
-                    System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
-                    break;
-                }
-            }
+            size--;
+            System.arraycopy(storage, (index + 1), storage, index, size - index);
+            storage[size] = null;
+            System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
         }
     }
 
@@ -67,7 +57,7 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+        return Arrays.copyOfRange(storage, 0, size);
     }
 
     public int size() {
@@ -80,16 +70,12 @@ public class ArrayStorage {
         System.out.println("База резюме очищена.");
     }
 
-    private boolean isFound(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                return true;
+                return i;
             }
         }
-        return false;
-    }
-
-    private boolean isFreeSpace() {
-        return size > LIMIT_STORAGE;
+        return -1;
     }
 }
