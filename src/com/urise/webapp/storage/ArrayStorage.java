@@ -23,12 +23,13 @@ public class ArrayStorage {
         }
     }
 
-    public void update(Resume r, String newUuid) {
-        if (getIndex(r.getUuid()) == -1) {
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index == -1) {
             System.out.printf("Резюме c Uuid = %s не существует.\n", r.getUuid());
         } else {
-            r.setUuid(newUuid);
-            System.out.printf("Uuid обновлен. Новый Uuid = %s.\n", newUuid);
+            storage[index] = r;
+            System.out.printf("Резюме %s обновлено.", r.getUuid());
         }
     }
 
@@ -47,7 +48,7 @@ public class ArrayStorage {
             System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
         } else {
             size--;
-            System.arraycopy(storage, (index + 1), storage, index, size - index);
+            storage[index] = storage[size];
             storage[size] = null;
             System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
         }
