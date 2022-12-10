@@ -6,9 +6,9 @@ public interface Storage {
 
     void save(Resume r);
 
-    void update(Resume r);
-
     Resume get(String uuid);
+
+    void update(Resume r);
 
     void delete(String uuid);
 
@@ -17,6 +17,4 @@ public interface Storage {
     int size();
 
     void clear();
-
-
 }
