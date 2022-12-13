@@ -9,13 +9,48 @@ public abstract class AbstractArrayStorage implements Storage {
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size;
 
-    public abstract void save(Resume r);
+    public void save(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (size > STORAGE_LIMIT) {
+            System.out.println("Резюме не сохранено. Хранилище переполнено.");
+        } else if (index >= 0) {
+            System.out.printf("Резюме не сохранено. Резюме с таким Uuid = %s уже есть в базе.\n", r.getUuid());
+        } else {
+            insertElement(r, index);
+            size++;
+        }
+    }
 
-    public abstract Resume get(String uuid);
+    public void delete(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
+        } else {
+            size--;
+            replacingDeletedElement(index);
+            storage[size] = null;
+            System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
+        }
+    }
 
-    public abstract void update(Resume r);
+    public Resume get(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
+            return null;
+        }
+        return storage[index];
+    }
 
-    public abstract void delete(String uuid);
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index < 0) {
+            System.out.printf("Резюме c Uuid = %s не существует.\n", r.getUuid());
+        } else {
+            storage[index] = r;
+            System.out.printf("Резюме %s обновлено.", r.getUuid());
+        }
+    }
 
     /**
      * @return array, contains only Resumes in storage (without null)
@@ -33,6 +68,10 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
         System.out.println("База резюме очищена.");
     }
+
+    protected abstract void insertElement(Resume r, int index);
+
+    protected abstract void replacingDeletedElement(int index);
 
     protected abstract int getIndex(String uuid);
 }

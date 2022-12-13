@@ -6,52 +6,18 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
-    public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (size > STORAGE_LIMIT) {
-            System.out.println("Резюме не сохранено. Хранилище переполнено.");
-        } else if (index > 0) {
-            System.out.printf("Резюме не сохранено. Резюме с таким Uuid = %s уже есть в базе.\n", r.getUuid());
-        } else {
-            if (storage[(index * -1) - 1] != null) {
-                System.arraycopy(storage, (index * -1) - 1, storage, ((index * -1) - 1) + 1, size - index);
-            }
-            storage[(index * -1) - 1] = r;
-            size++;
+    protected void insertElement(Resume r, int index) {
+        int insertedElement = (index * -1) - 1;
+        if (storage[insertedElement] != null) {
+            System.arraycopy(storage, insertedElement, storage, insertedElement + 1, size - index);
         }
+        storage[insertedElement] = r;
     }
 
     @Override
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
-            return null;
-        }
-        return storage[index];
-    }
-
-    @Override
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index < 0) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", r.getUuid());
-        } else {
-            storage[index] = r;
-            System.out.printf("Резюме %s обновлено.", r.getUuid());
-        }
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
-        } else {
-            size--;
-            System.arraycopy(storage, (index + 1), storage, index, size - index);
-            storage[size] = null;
-            System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
+    protected void replacingDeletedElement(int index) {
+        if (size != index) {
+            System.arraycopy(storage, index + 1, storage, index, size - index);
         }
     }
 

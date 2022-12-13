@@ -7,49 +7,13 @@ import com.urise.webapp.model.Resume;
  */
 public class ArrayStorage extends AbstractArrayStorage {
     @Override
-    public void save(Resume r) {
-        if (size > STORAGE_LIMIT) {
-            System.out.println("Резюме не сохранено. Хранилище переполнено.");
-        } else if (getIndex(r.getUuid()) != -1) {
-            System.out.printf("Резюме не сохранено. Резюме с таким Uuid = %s уже есть в базе.\n", r.getUuid());
-        } else {
-            storage[size] = r;
-            size++;
-        }
+    protected void insertElement(Resume r, int index) {
+        storage[size] = r;
     }
 
     @Override
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
-            return null;
-        }
-        return storage[index];
-    }
-
-    @Override
-    public void update(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index == -1) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", r.getUuid());
-        } else {
-            storage[index] = r;
-            System.out.printf("Резюме %s обновлено.", r.getUuid());
-        }
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.printf("Резюме c Uuid = %s не существует.\n", uuid);
-        } else {
-            size--;
-            storage[index] = storage[size];
-            storage[size] = null;
-            System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
-        }
+    protected void replacingDeletedElement(int index) {
+        storage[index] = storage[size];
     }
 
     @Override
