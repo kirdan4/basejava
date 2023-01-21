@@ -18,13 +18,13 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     protected void fillDeletedElement(int index) {
         if (size != index) {
-            System.arraycopy(storage , index + 1, storage, index, size - index);
+            System.arraycopy(storage, index + 1, storage, index, size - index);
         }
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        Resume searchKey = new Resume(uuid);
-        return Arrays.binarySearch(storage, 0, size, searchKey);
+    protected Integer getSearchElement(String uuid) {
+        Resume searchElement = new Resume(uuid);
+        return Arrays.binarySearch(storage, 0, size, searchElement);
     }
 }
