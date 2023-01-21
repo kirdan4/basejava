@@ -1,43 +1,62 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage implements Storage {
     protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size;
 
-    @Override
-    protected void doSave(Resume r, Object searchElement) {
+    public void save(Resume r) {
+        int index = getIndex(r.getUuid());
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
+        } else if (index >= 0) {
+            throw new ExistStorageException(r.getUuid());
+        } else {
+            insertElement(r, index);
+            size++;
         }
-        insertElement(r, (Integer) searchElement);
-        size++;
     }
 
-    @Override
-    protected void doDelete(Object searchElement) {
-        size--;
-        fillDeletedElement((Integer) searchElement);
-        storage[size] = null;
-        System.out.printf("Резюме c Uuid = %s удалено.\n", searchElement);
+    public void delete(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            throw new NotExistStorageException(uuid);
+        } else {
+            size--;
+            fillDeletedElement(index);
+            storage[size] = null;
+            System.out.printf("Резюме c Uuid = %s удалено.\n", uuid);
+        }
     }
 
-    @Override
-    protected Resume doGet(Object searchElement) {
-        return storage[(Integer) searchElement];
+    public Resume get(String uuid) {
+        int index = getIndex(uuid);
+        if (index < 0) {
+            throw new NotExistStorageException(uuid);
+        }
+        return storage[index];
     }
 
-    @Override
-    protected void doUpdate(Resume r, Object searchElement) {
-        storage[(Integer) searchElement] = r;
-        System.out.printf("Резюме %s обновлено.", r.getUuid());
+    public void update(Resume r) {
+        int index = getIndex(r.getUuid());
+        if (index < 0) {
+            throw new NotExistStorageException(r.getUuid());
+        } else {
+            storage[index] = r;
+            System.out.printf("Резюме %s обновлено.", r.getUuid());
+        }
     }
 
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
@@ -56,10 +75,5 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected abstract void fillDeletedElement(int index);
 
-    protected abstract Integer getSearchElement(String uuid);
-
-    @Override
-    protected boolean isExist(Object searchElement) {
-        return (Integer) searchElement >= 0;
-    }
+    protected abstract int getIndex(String uuid);
 }

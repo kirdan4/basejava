@@ -12,7 +12,7 @@ public interface Storage {
 
     void delete(String uuid);
 
-    Object[] getAll();
+    Resume[] getAll();
 
     int size();
 
