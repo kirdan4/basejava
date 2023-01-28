@@ -20,7 +20,7 @@ public class MainTestArrayStorage {
         ARRAY_STORAGE.save(r2);
         ARRAY_STORAGE.save(r3);
         ARRAY_STORAGE.save(r4);
-        ARRAY_STORAGE.save(r2);
+//        ARRAY_STORAGE.save(r2);
 
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
         System.out.println("Get r2: " + ARRAY_STORAGE.get(r2.getUuid()));
@@ -39,7 +39,7 @@ public class MainTestArrayStorage {
         ARRAY_STORAGE.delete(r3.getUuid());
         ARRAY_STORAGE.delete(r4.getUuid());
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
-        ARRAY_STORAGE.save(r1);
+//        ARRAY_STORAGE.save(r1);
         printAll();
 
         ARRAY_STORAGE.clear();
@@ -50,7 +50,7 @@ public class MainTestArrayStorage {
 
     private static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : ARRAY_STORAGE.getAll()) {
+        for (Object r : ARRAY_STORAGE.getAll()) {
             System.out.println(r);
         }
     }
