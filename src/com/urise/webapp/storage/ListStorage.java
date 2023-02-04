@@ -15,11 +15,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Object[] getAll() {
-        return storage.toArray();
-    }
-
-    @Override
     public void clear() {
         storage.clear();
     }
@@ -48,6 +43,7 @@ public class ListStorage extends AbstractStorage {
     protected boolean isExist(Object searchKey) {
         return (Integer) searchKey >= 0;
     }
+
     @Override
     protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
@@ -56,5 +52,10 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
+    }
+
+    @Override
+    protected List<Resume> getStorage() {
+        return storage;
     }
 }
