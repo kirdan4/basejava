@@ -6,11 +6,12 @@ import java.util.Objects;
 public class ListSection extends AbstractSection {
     private final List<String> elements;
 
-    public ListSection(List<String> element) {
-        this.elements = element;
+    public ListSection(List<String> elements) {
+        Objects.requireNonNull(elements, "elements must not be null");
+        this.elements = elements;
     }
 
-    public List<String> elements() {
+    public List<String> getElements() {
         return elements;
     }
 
