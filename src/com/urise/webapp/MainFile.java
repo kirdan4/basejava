@@ -3,7 +3,6 @@ package com.urise.webapp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 public class MainFile {
 
@@ -46,17 +45,18 @@ public class MainFile {
 //                }
 //            }
 //        }
-        list(dir);
+        list(dir, "");
     }
 
-    public static void list(File dir) {
+    public static void list(File dir, String indent) {
         File[] files = dir.listFiles();
-        for (int i = 0; i < Objects.requireNonNull(files, "Directory read error").length; i++) {
-            if (files[i].isFile()) {
-                System.out.println("File: " + files[i].getAbsolutePath());
-            } else if (files[i].isDirectory()) {
-                System.out.println("Directory: " + files[i].getAbsolutePath());
-                list(files[i]);
+        assert files != null;
+        for (File file : files) {
+            if (file.isFile()) {
+                System.out.println(indent + "File: " + file.getAbsolutePath());
+            } else if (file.isDirectory()) {
+                System.out.println(indent + "Directory: " + file.getAbsolutePath());
+                list(file, indent + "\t");
             }
         }
     }
