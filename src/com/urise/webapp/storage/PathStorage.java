@@ -16,11 +16,11 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toCollection;
 
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
     private final StreamSerializer streamSerializer;
 
-    protected AbstractPathStorage(String dir, StreamSerializer streamSerializer) {
+    protected PathStorage(String dir, StreamSerializer streamSerializer) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         this.streamSerializer = streamSerializer;
@@ -33,13 +33,13 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected Path getSearchKey(String uuid) {
-        return directory.resolve(uuid);
+    public int size() {
+        return (int) getPathStream().count();
     }
 
     @Override
-    protected boolean isExist(Path path) {
-        return Files.exists(path);
+    public void clear() {
+        getPathStream().forEach(this::doDelete);
     }
 
     @Override
@@ -79,29 +79,25 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
+    protected boolean isExist(Path path) {
+        return Files.exists(path);
+    }
+
+    @Override
+    protected Path getSearchKey(String uuid) {
+        return directory.resolve(uuid);
+    }
+
+    @Override
     protected List<Resume> getStorage() {
-        try (Stream<Path> stream = Files.list(directory)){
-            return stream.map(this::doGet).collect(toCollection(ArrayList::new));
-        } catch (IOException e) {
-            throw new StorageException("Directory read error", null, e);
-        }
+        return getPathStream().map(this::doGet).collect(toCollection(ArrayList::new));
     }
 
-    @Override
-    public int size() {
-        try (Stream<Path> stream = Files.list(directory.toAbsolutePath())) {
-            return (int) stream.count();
+    private Stream<Path> getPathStream() {
+        try {
+            return Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("Directory read error", null, e);
-        }
-    }
-
-    @Override
-    public void clear() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            stream.forEach(this::doDelete);
-        } catch (IOException e) {
-            throw new StorageException("path delete error", null, e);
+            throw new StorageException("Path delete error", null, e);
         }
     }
 }
