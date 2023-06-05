@@ -9,10 +9,10 @@ import static com.urise.webapp.util.DateUtil.of;
 
 public class Period implements Serializable {
     private static final long SERIAL_VERSION_UID = 1L;
-    private final LocalDate startDate;
-    private final LocalDate endDate;
-    private final String title;
-    private final String description;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String title;
+    private String description;
 
     public Period(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
         this(of(startYear, startMonth), of(endYear, endMonth), title, description);
@@ -26,6 +26,9 @@ public class Period implements Serializable {
         this.endDate = endDate;
         this.title = title;
         this.description = description;
+    }
+
+    public Period() {
     }
 
     public LocalDate getStartDate() {

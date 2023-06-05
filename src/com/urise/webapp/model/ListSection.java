@@ -1,11 +1,16 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.List;
 import java.util.Objects;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ListSection extends AbstractSection {
     private static final long SERIAL_VERSION_UID = 1L;
-    private final List<String> elements;
+    private List<String> elements;
+
+    public ListSection() {
+    }
 
     public ListSection(List<String> elements) {
         Objects.requireNonNull(elements, "elements must not be null");
